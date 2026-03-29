@@ -188,18 +188,22 @@ async function submitVideos() {
   files.forEach((f, i) => fd.append('videos', f, f.name))
 
   const msgs = [
+    'Waking up server (first request takes ~1 minute)…',
     'Extracting pose from your videos…',
     'Analysing movement patterns…',
-    'Computing quality scores…',
-    'Calculating recovery score…',
-  ]
+    'Computing recovery score…',
+]
   let mi = 0
   const msgInt = setInterval(() => {
     otxt.textContent = msgs[mi % msgs.length]; mi++
   }, 4000)
 
   try {
-    const res  = await fetch('/api/analyze', {method:'POST', body:fd})
+    const res = await fetch('/api/analyze', {
+    method: 'POST',
+    body: fd,
+    signal: AbortSignal.timeout(300000)  // 5 minute timeout
+})
     const data = await res.json()
     clearInterval(msgInt)
     if (!res.ok) throw new Error(data.detail || 'Analysis failed')
