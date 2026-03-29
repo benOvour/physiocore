@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Results — PhysioScore</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#F5F0E8;--dark:#1A1A2E;--teal:#0F6E56;--teal2:#1D9E75;--amber:#C8813A;--light:#E8F5F0;--border:rgba(26,26,46,0.1);--good:#1D9E75;--fair:#C8813A;--poor:#C0392B}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--cream);color:var(--dark);font-family:'DM Sans',sans-serif;min-height:100vh}
+nav{padding:1.2rem 4rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);background:rgba(245,240,232,0.95)}
+.logo{font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--teal);text-decoration:none}
+.nav-actions{display:flex;gap:1rem;align-items:center}
+.btn-retake{color:var(--teal);text-decoration:none;font-size:.9rem;font-weight:500}
+.btn-print{background:var(--teal);color:#fff;padding:.5rem 1.4rem;border-radius:2rem;text-decoration:none;font-size:.85rem;font-weight:500;cursor:pointer;border:none;font-family:'DM Sans',sans-serif}
+
+.page{max-width:960px;margin:0 auto;padding:3rem 2rem 5rem}
+
+/* SCORE HERO */
+.score-hero{display:grid;grid-template-columns:auto 1fr;gap:4rem;align-items:center;margin-bottom:4rem;background:#fff;border-radius:1.5rem;padding:3rem;box-shadow:0 2px 24px rgba(0,0,0,0.06)}
+.score-circle{position:relative;width:180px;height:180px;flex-shrink:0}
+.score-circle svg{width:100%;height:100%;transform:rotate(-90deg)}
+.score-circle circle{fill:none;stroke-width:14;stroke-linecap:round}
+.ring-bg{stroke:#f0ede5}
+.ring-main{stroke:var(--teal2);stroke-dasharray:502;stroke-dashoffset:502;transition:stroke-dashoffset 1.5s ease}
+.score-num{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.score-num .big{font-family:'DM Serif Display',serif;font-size:3.2rem;color:var(--teal);line-height:1}
+.score-num .of{font-size:.8rem;color:#888;font-weight:300}
+.score-info h2{font-family:'DM Serif Display',serif;font-size:1.8rem;margin-bottom:.5rem}
+.score-info .level-badge{display:inline-block;padding:.3rem 1rem;border-radius:2rem;font-size:.85rem;font-weight:500;margin-bottom:1rem}
+.level-excellent{background:#e8f5f0;color:var(--teal)}
+.level-good{background:#edf7e8;color:#3B6D11}
+.level-moderate{background:#fef3e2;color:#854F0B}
+.level-fair{background:#fdecea;color:#A32D2D}
+.level-needs{background:#fdecea;color:#A32D2D}
+.score-info .summary{color:#555;font-weight:300;line-height:1.6;font-size:.95rem;margin-bottom:1.5rem}
+.region-pills{display:flex;gap:.7rem;flex-wrap:wrap}
+.region-pill{background:var(--light);border:1px solid rgba(15,110,86,0.2);border-radius:2rem;padding:.35rem .9rem;font-size:.78rem;color:var(--teal);font-weight:500}
+
+/* PER EXERCISE */
+.section-title{font-family:'DM Serif Display',serif;font-size:1.6rem;margin-bottom:.4rem}
+.section-sub{color:#666;font-weight:300;font-size:.9rem;margin-bottom:1.8rem}
+
+.ex-cards{display:grid;grid-template-columns:repeat(2,1fr);gap:1.2rem;margin-bottom:3rem}
+.ex-card{background:#fff;border-radius:1.2rem;padding:1.6rem;border:1px solid var(--border);transition:box-shadow .2s}
+.ex-card:hover{box-shadow:0 4px 20px rgba(0,0,0,0.08)}
+.ex-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem}
+.ex-card-title{font-weight:500;font-size:.95rem;color:var(--dark)}
+.ex-card-code{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--teal)}
+.status-dot{width:10px;height:10px;border-radius:50%;margin-top:.3rem;flex-shrink:0}
+.dot-good{background:var(--good)}
+.dot-fair{background:var(--fair)}
+.dot-poor{background:var(--poor)}
+.score-bar-wrap{margin-bottom:.8rem}
+.score-bar-label{display:flex;justify-content:space-between;font-size:.8rem;margin-bottom:.4rem;color:#777}
+.score-bar-track{height:8px;background:#f0ede5;border-radius:4px;overflow:hidden}
+.score-bar-fill{height:100%;border-radius:4px;transition:width 1.2s ease}
+.fill-good{background:var(--good)}
+.fill-fair{background:var(--fair)}
+.fill-poor{background:var(--poor)}
+.ex-feedback{font-size:.78rem;color:#666;line-height:1.5;font-weight:300;font-style:italic;border-left:3px solid;padding-left:.8rem}
+.fb-good{border-color:var(--good);color:#1D9E75}
+.fb-fair{border-color:var(--fair);color:#854F0B}
+.fb-poor{border-color:var(--poor);color:#A32D2D}
+.detected-as{font-size:.72rem;color:#aaa;margin-top:.6rem}
+
+/* FOCUS AREAS */
+.focus-section{background:var(--dark);border-radius:1.5rem;padding:2.5rem;color:#fff;margin-bottom:2rem}
+.focus-section h3{font-family:'DM Serif Display',serif;font-size:1.4rem;margin-bottom.6rem;color:#fff}
+.focus-list{list-style:none;margin-top:1.2rem}
+.focus-list li{display:flex;gap:1rem;align-items:flex-start;padding:.9rem 0;border-bottom:1px solid rgba(255,255,255,0.07)}
+.focus-list li:last-child{border:none}
+.focus-num{font-family:'DM Serif Display',serif;font-size:1.4rem;color:var(--amber);flex-shrink:0;line-height:1.2}
+.focus-text strong{display:block;font-weight:500;font-size:.9rem;color:#fff;margin-bottom:.3rem}
+.focus-text span{font-size:.82rem;color:#aaa;font-weight:300;line-height:1.5}
+
+/* RETAKE */
+.retake-bar{text-align:center;padding:2rem;background:#fff;border-radius:1.2rem;border:1px solid var(--border)}
+.retake-bar p{color:#666;font-weight:300;margin-bottom:1rem;font-size:.9rem}
+.retake-bar a{background:var(--teal);color:#fff;padding:.9rem 2.5rem;border-radius:2rem;text-decoration:none;font-weight:500;font-size:.95rem;transition:background .2s}
+.retake-bar a:hover{background:var(--teal2)}
+
+@media(max-width:700px){
+  .score-hero{grid-template-columns:1fr;text-align:center;gap:2rem}
+  .score-circle{margin:0 auto}
+  .ex-cards{grid-template-columns:1fr}
+  nav{padding:1rem 1.5rem}
+  .page{padding:2rem 1rem 4rem}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">PhysioScore</a>
+  <div class="nav-actions">
+    <a href="/assess" class="btn-retake">Retake Assessment</a>
+    <button class="btn-print" onclick="window.print()">Save Report</button>
+  </div>
+</nav>
+
+<div class="page" id="page-content">
+  <div id="loading" style="text-align:center;padding:5rem;color:#888;font-weight:300">
+    Loading your results…
+  </div>
+</div>
+
+<script>
+const data = JSON.parse(sessionStorage.getItem('physio_results') || 'null')
+
+if (!data) {
+  document.getElementById('page-content').innerHTML = `
+    <div style="text-align:center;padding:5rem">
+      <p style="color:#888;margin-bottom:1.5rem">No results found. Please complete an assessment first.</p>
+      <a href="/assess" style="color:var(--teal);font-weight:500">Start Assessment →</a>
+    </div>`
+} else {
+  renderResults(data)
+}
+
+function levelClass(level) {
+  const map = {
+    'Excellent':'excellent','Good':'good','Moderate':'moderate',
+    'Fair':'fair','Needs Work':'needs'
+  }
+  return 'level-' + (map[level] || 'moderate')
+}
+
+function statusColor(status) {
+  return status === 'good' ? 'good' : status === 'fair' ? 'fair' : 'poor'
+}
+
+function renderResults(data) {
+  const score     = data.recovery_score
+  const exercises = data.exercises.filter(e => !e.error)
+  const needsImp  = exercises.filter(e => e.status !== 'good')
+  const goodOnes  = exercises.filter(e => e.status === 'good')
+
+  // Region scores
+  const legEx  = exercises.filter(e => e.exercise_idx < 6)
+  const shEx   = exercises.filter(e => e.exercise_idx >= 6)
+  const legAvg = legEx.length ? (legEx.reduce((a,e) => a+e.quality,0)/legEx.length).toFixed(0) : 'N/A'
+  const shAvg  = shEx.length  ? (shEx.reduce((a,e) => a+e.quality,0)/shEx.length).toFixed(0)  : 'N/A'
+
+  // Ring offset: 502 = full circle circumference for r=80
+  const offset = 502 - (502 * score / 100)
+
+  const html = `
+    <div class="score-hero">
+      <div class="score-circle">
+        <svg viewBox="0 0 180 180">
+          <circle class="ring-bg" cx="90" cy="90" r="80"/>
+          <circle class="ring-main" id="ring" cx="90" cy="90" r="80"/>
+        </svg>
+        <div class="score-num">
+          <div class="big">${score}</div>
+          <div class="of">/ 100</div>
+        </div>
+      </div>
+      <div class="score-info">
+        <h2>Recovery Assessment</h2>
+        <span class="level-badge ${levelClass(data.level)}">${data.level}</span>
+        <p class="summary">${data.message}</p>
+        <div class="region-pills">
+          <span class="region-pill">Leg / Trunk: ${legAvg}%</span>
+          <span class="region-pill">Shoulder: ${shAvg}%</span>
+          <span class="region-pill">${goodOnes.length} / ${exercises.length} exercises good</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-title">Exercise breakdown</div>
+    <p class="section-sub">Quality score and feedback for each of your 10 exercises</p>
+
+    <div class="ex-cards">
+      ${exercises.map(ex => {
+        const c = statusColor(ex.status)
+        return `
+        <div class="ex-card">
+          <div class="ex-card-header">
+            <div>
+              <div class="ex-card-code">${'m0'+((ex.exercise_idx+1)<10?'0':'')+(ex.exercise_idx+1)}`.replace('m00','m0') + `</div>
+              <div class="ex-card-title">${ex.exercise_name}</div>
+            </div>
+            <div class="status-dot dot-${c}"></div>
+          </div>
+          <div class="score-bar-wrap">
+            <div class="score-bar-label">
+              <span>Quality score</span>
+              <span style="font-weight:500;color:var(--${c==='good'?'teal':'amber'})">${ex.quality}%</span>
+            </div>
+            <div class="score-bar-track">
+              <div class="score-bar-fill fill-${c}" style="width:0%" data-width="${ex.quality}%"></div>
+            </div>
+          </div>
+          <div class="ex-feedback fb-${c}">${ex.feedback}</div>
+          <div class="detected-as">Detected as: ${ex.exercise_name} (${ex.confidence}% confidence)</div>
+        </div>`
+      }).join('')}
+    </div>
+
+    ${needsImp.length > 0 ? `
+    <div class="focus-section">
+      <h3>Focus areas for improvement</h3>
+      <p style="color:#aaa;font-size:.85rem;font-weight:300">Prioritised exercises to focus on in your rehabilitation</p>
+      <ul class="focus-list">
+        ${needsImp.sort((a,b) => a.quality-b.quality).map((ex, i) => `
+          <li>
+            <span class="focus-num">${String(i+1).padStart(2,'0')}</span>
+            <div class="focus-text">
+              <strong>${ex.exercise_name}</strong>
+              <span>${ex.feedback} — current score: ${ex.quality}%</span>
+            </div>
+          </li>
+        `).join('')}
+      </ul>
+    </div>` : `
+    <div style="background:var(--light);border-radius:1.2rem;padding:2rem;text-align:center;margin-bottom:2rem;border:1px solid rgba(15,110,86,0.2)">
+      <p style="color:var(--teal);font-weight:500;font-size:1rem">All exercises performing well — excellent recovery!</p>
+    </div>`}
+
+    <div class="retake-bar">
+      <p>Want to track your progress over time? Retake the assessment after your next rehabilitation session.</p>
+      <a href="/assess">Retake Assessment</a>
+    </div>
+  `
+
+  document.getElementById('page-content').innerHTML = html
+
+  // Animate ring
+  setTimeout(() => {
+    document.getElementById('ring').style.strokeDashoffset = offset
+  }, 100)
+
+  // Animate bars
+  setTimeout(() => {
+    document.querySelectorAll('.score-bar-fill').forEach(el => {
+      el.style.width = el.dataset.width
+    })
+  }, 300)
+}
+</script>
+</body>
+</html>

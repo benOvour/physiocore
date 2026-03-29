@@ -1,0 +1,4 @@
+model/pose_landmarker.task
+__pycache__/
+*.pyc
+.env
