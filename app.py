@@ -44,7 +44,13 @@ SELECTED_JOINTS = config["SELECTED_JOINTS"]
 EXERCISE_NAMES  = config["EXERCISE_NAMES"]
 
 print("Loading TFLite model...")
-interpreter = tf.lite.Interpreter(model_path=MODEL_PATH)
+try:
+    interpreter = tf.lite.Interpreter(
+        model_path=MODEL_PATH,
+        experimental_op_resolver_type=tf.lite.experimental.OpResolverType.AUTO
+    )
+except Exception:
+    interpreter = tf.lite.Interpreter(model_path=MODEL_PATH)
 interpreter.allocate_tensors()
 IN_DET  = interpreter.get_input_details()
 OUT_DET = interpreter.get_output_details()
@@ -203,5 +209,5 @@ async def analyze(videos: List[UploadFile] = File(...)):
     })
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8000))
+    port = int(os.environ.get("PORT", 10000))
     uvicorn.run(app, host="0.0.0.0", port=port)
