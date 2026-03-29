@@ -16,7 +16,7 @@ templates = Jinja2Templates(directory="templates")
 
 # ── Paths ─────────────────────────────────────────────────────
 BASE_DIR    = os.path.dirname(os.path.abspath(__file__))
-MODEL_PATH  = os.path.join(BASE_DIR, "model", "physio_finetuned_100_v2.tflite")
+MODEL_PATH = os.path.join(BASE_DIR, "model", "physio_deploy.tflite")
 CONFIG_PATH = os.path.join(BASE_DIR, "model", "config_final.pkl")
 SCALER_PATH = os.path.join(BASE_DIR, "model", "scaler_final.pkl")
 MP_MODEL    = os.path.join(BASE_DIR, "model", "pose_landmarker.task")
